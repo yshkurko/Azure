@@ -8,6 +8,18 @@
 - Docker Desktop — проверка: `docker version` (Docker Desktop должен быть **запущен**)
 - kubectl — проверка: `kubectl version --client`
 
+## Вход в GitHub в VS Code
+
+Нужен для GitHub Copilot, синхронизации настроек и урока 15 (CI/CD):
+
+1. Нажмите иконку **аккаунта** (или шестерёнку) в левом нижнем углу VS Code.
+2. Выберите **Sign in to Sync Settings** или пункт **GitHub**.
+3. В браузере подтвердите **Authorize Visual Studio Code**.
+4. Вернитесь в редактор — аккаунт подключён.
+
+> На компьютере может быть сохранён вход другого GitHub-аккаунта. Для этого репозитория имя пользователя
+> указано прямо в адресе remote (`https://yshkurko@github.com/...`), поэтому Git спросит вход именно для него.
+
 ## Установка недостающего (через winget)
 
 Откройте PowerShell **от имени обычного пользователя** и выполните:
@@ -28,6 +40,25 @@ npm --version
 npm install -g @angular/cli
 ng version
 ```
+
+### Ошибка «running scripts is disabled on this system»
+
+Если `npm` или `ng` в PowerShell падают с этой ошибкой — разрешите запуск подписанных скриптов для текущего пользователя:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+# подтвердите: Y + Enter
+Get-ExecutionPolicy -List
+npm --version
+```
+
+`-Scope CurrentUser` обычно не требует прав администратора; если всё же требует — выполните команду
+в PowerShell, запущенном **от имени администратора**, затем вернитесь в обычный терминал.
+
+### Альтернатива: Azure Cloud Shell
+Команды `az` из уроков можно выполнять и в Cloud Shell (иконка **`>_`** в портале) — там Azure CLI, Terraform
+и kubectl уже установлены. Выбирайте **No storage account required**, чтобы не создавать платный Storage.
+Но Docker и сборка .NET/Angular в Cloud Shell недоступны — основная работа идёт локально.
 
 ## Расширения VS Code (рекомендуется)
 - **C# Dev Kit** — .NET
@@ -55,7 +86,7 @@ az account show -o table
 $providers = "Microsoft.Network","Microsoft.Sql","Microsoft.Web","Microsoft.Storage",
              "Microsoft.ServiceBus","Microsoft.OperationalInsights","Microsoft.Insights",
              "Microsoft.ContainerRegistry","Microsoft.ContainerService","Microsoft.KeyVault",
-             "Microsoft.ManagedIdentity"
+             "Microsoft.ManagedIdentity","Microsoft.CloudShell"
 foreach ($p in $providers) { az provider register --namespace $p }
 az provider list --query "[?registrationState=='Registered'].namespace" -o tsv
 ```

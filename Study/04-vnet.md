@@ -37,6 +37,31 @@ flowchart LR
 
 ## Практика
 
+Сначала создайте сеть **через Portal**, чтобы увидеть все параметры, затем — то же самое через CLI
+(или удалите созданное в Portal и повторите командами).
+
+### Вариант A: Portal
+
+1. **Resource groups → Create**: Subscription — ваша, Resource group — `rg-shop-manual`, Region — **Sweden Central**.
+   Вкладка **Tags**: `course` = `azure-learning`. **Review + create → Create**.
+2. **Virtual networks → Create**:
+   - **Basics**: Resource group `rg-shop-manual`, Name `vnet-shop`, Region **Sweden Central**.
+   - **Security**: ничего не включайте (Bastion, Firewall, DDoS Protection — **платные**, от десятков до тысяч USD/мес).
+   - **IP addresses**: замените адресное пространство по умолчанию (`10.0.0.0/16`) на `10.20.0.0/16`.
+     Удалите подсеть `default` и добавьте:
+     - `snet-app` — `10.20.1.0/24`, **Subnet delegation**: `Microsoft.Web/serverFarms`;
+     - `snet-pe` — `10.20.2.0/24`.
+   - **Tags**: `course` = `azure-learning`.
+   - **Review + create → Create**.
+3. **Network security groups → Create**: `nsg-shop-default` в той же группе. Затем в NSG → **Subnets → Associate**
+   привяжите его к `snet-app` и `snet-pe`.
+
+> **«No results were found» в поле Resource group или Virtual network** в мастере создания другого сервиса
+> означает, что этих ресурсов ещё нет (или выбрана не та подписка/регион). Создайте их (шаги выше),
+> затем закройте и заново откройте мастер — они появятся в выпадающих списках.
+
+### Вариант Б: Azure CLI
+
 ```powershell
 . .\Study\scripts\env.ps1     # из корня репозитория
 $TAGS = "course=azure-learning"
