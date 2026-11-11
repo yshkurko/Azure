@@ -1,0 +1,24 @@
+# .NET
+bin/
+obj/
+.vs/
+*.user
+
+# Node / Angular
+node_modules/
+.angular/
+dist/
+
+# Terraform: state и переменные могут содержать секреты — не коммитим
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Kubernetes / локальные секреты
+*.local.yaml
+.env

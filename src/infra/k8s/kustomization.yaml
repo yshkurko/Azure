@@ -1,0 +1,43 @@
+# Применение: kubectl apply -k src/infra/k8s
+# Перед применением замените значения <...> на выходные данные terraform output (урок 14).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - catalog-api.yaml
+  - orders-api.yaml
+  - order-processor.yaml
+  - web.yaml
+
+images:
+  - name: shop-catalog-api
+    newName: <ACR_LOGIN_SERVER>/shop-catalog-api
+    newTag: v1
+  - name: shop-orders-api
+    newName: <ACR_LOGIN_SERVER>/shop-orders-api
+    newTag: v1
+  - name: shop-order-processor
+    newName: <ACR_LOGIN_SERVER>/shop-order-processor
+    newTag: v1
+  - name: shop-web
+    newName: <ACR_LOGIN_SERVER>/shop-web
+    newTag: v1
+
+configMapGenerator:
+  - name: shop-config
+    namespace: shop
+    literals:
+      - ConnectionStrings__ShopDb=Server=tcp:<SQL_SERVER_FQDN>,1433;Database=shopdb;Authentication=Active Directory Workload Identity;Encrypt=True
+      - Messaging__Provider=ServiceBus
+      - Messaging__ServiceBus__FullyQualifiedNamespace=<SERVICEBUS_NAMESPACE>.servicebus.windows.net
+      - Messaging__StorageQueue__ServiceUri=https://<STORAGE_ACCOUNT>.queue.core.windows.net
+
+patches:
+  - target:
+      kind: ServiceAccount
+      name: shop-app
+    patch: |-
+      - op: replace
+        path: /metadata/annotations/azure.workload.identity~1client-id
+        value: <WORKLOAD_IDENTITY_CLIENT_ID>

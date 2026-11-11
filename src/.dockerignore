@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/.angular/
+**/dist/
+**/.vs/
+**/.vscode/
+infra/
+shop-web/
+.github/
+*.md

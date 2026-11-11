@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-processor
+  namespace: shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-processor
+  template:
+    metadata:
+      labels:
+        app: order-processor
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: shop-app
+      containers:
+        - name: order-processor
+          image: shop-order-processor
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: shop-config
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30

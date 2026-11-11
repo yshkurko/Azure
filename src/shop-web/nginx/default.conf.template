@@ -1,0 +1,22 @@
+# Переменные ${CATALOG_API_URL} и ${ORDERS_API_URL} подставляются при старте контейнера.
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+
+    location /api/products {
+        proxy_pass ${CATALOG_API_URL};
+    }
+
+    location /api/orders {
+        proxy_pass ${ORDERS_API_URL};
+    }
+
+    location = /config.json {
+        add_header Cache-Control "no-store";
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

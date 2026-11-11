@@ -1,0 +1,25 @@
+@baseUrl = http://localhost:5102
+
+GET {{baseUrl}}/health
+
+###
+
+# @name create
+POST {{baseUrl}}/api/orders
+Content-Type: application/json
+
+{
+  "customerEmail": "student@example.com",
+  "items": [
+    { "productId": 1, "quantity": 1 },
+    { "productId": 6, "quantity": 2 }
+  ]
+}
+
+###
+
+GET {{baseUrl}}/api/orders/{{create.response.body.$.id}}
+
+###
+
+GET {{baseUrl}}/api/orders

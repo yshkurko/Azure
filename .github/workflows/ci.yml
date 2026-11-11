@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths: ["src/**", ".github/workflows/**"]
+  pull_request:
+    paths: ["src/**", ".github/workflows/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  dotnet:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: src/global.json
+      - run: dotnet restore Shop.slnx
+      - run: dotnet build Shop.slnx --no-restore -c Release
+
+  angular:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/shop-web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npx ng build --configuration production
+
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive src/infra/terraform
+      - name: Validate
+        run: |
+          for d in bootstrap envs/paas envs/aks; do
+            (cd src/infra/terraform/$d && terraform init -backend=false -input=false && terraform validate)
+          done

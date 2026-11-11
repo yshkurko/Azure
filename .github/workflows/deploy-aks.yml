@@ -1,0 +1,54 @@
+# Ручной деплой в AKS (урок 15). Вход в Azure по OIDC — без паролей в секретах.
+# Нужные GitHub Variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID,
+#   AKS_RESOURCE_GROUP, AKS_NAME, ACR_NAME, SQL_SERVER_FQDN, SERVICEBUS_FQDN,
+#   STORAGE_ACCOUNT, WORKLOAD_IDENTITY_CLIENT_ID
+name: Deploy to AKS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build images in ACR
+        working-directory: src
+        run: |
+          for p in Shop.Catalog.Api:shop-catalog-api Shop.Orders.Api:shop-orders-api Shop.OrderProcessor:shop-order-processor; do
+            project=${p%%:*}; image=${p##*:}
+            az acr build -r "${{ vars.ACR_NAME }}" -t "$image:$TAG" --build-arg PROJECT=$project -f Dockerfile .
+          done
+          az acr build -r "${{ vars.ACR_NAME }}" -t "shop-web:$TAG" ./shop-web
+
+      - uses: azure/setup-kubectl@v4
+
+      - name: Get AKS credentials
+        run: az aks get-credentials -g "${{ vars.AKS_RESOURCE_GROUP }}" -n "${{ vars.AKS_NAME }}" --overwrite-existing
+
+      - name: Render and apply manifests
+        working-directory: src/infra/k8s
+        run: |
+          sed -i \
+            -e "s|<ACR_LOGIN_SERVER>|${{ vars.ACR_NAME }}.azurecr.io|g" \
+            -e "s|<SQL_SERVER_FQDN>|${{ vars.SQL_SERVER_FQDN }}|g" \
+            -e "s|<SERVICEBUS_NAMESPACE>.servicebus.windows.net|${{ vars.SERVICEBUS_FQDN }}|g" \
+            -e "s|<STORAGE_ACCOUNT>|${{ vars.STORAGE_ACCOUNT }}|g" \
+            -e "s|<WORKLOAD_IDENTITY_CLIENT_ID>|${{ vars.WORKLOAD_IDENTITY_CLIENT_ID }}|g" \
+            -e "s|newTag: v1|newTag: \"$TAG\"|g" \
+            kustomization.yaml
+          kubectl apply -k .
+          kubectl -n shop rollout status deployment --timeout=5m

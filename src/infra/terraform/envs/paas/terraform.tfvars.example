@@ -1,0 +1,5 @@
+# Скопируйте в terraform.tfvars и заполните (terraform.tfvars в .gitignore).
+subscription_id    = "00000000-0000-0000-0000-000000000000"
+sql_admin_login    = "you@example.com"
+client_ip          = "203.0.113.10"
+messaging_provider = "StorageQueue"

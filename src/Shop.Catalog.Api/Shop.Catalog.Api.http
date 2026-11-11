@@ -1,0 +1,15 @@
+@baseUrl = http://localhost:5101
+
+GET {{baseUrl}}/health
+
+###
+
+GET {{baseUrl}}/api/products
+
+###
+
+GET {{baseUrl}}/api/products?category=Периферия
+
+###
+
+GET {{baseUrl}}/api/products/1

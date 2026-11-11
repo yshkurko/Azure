@@ -1,0 +1,5 @@
+# Скопируйте в backend.hcl и подставьте значения из terraform output в bootstrap.
+resource_group_name  = "rg-shop-tfstate"
+storage_account_name = "sttfstateXXXXXX"
+container_name       = "tfstate"
+use_azuread_auth     = true

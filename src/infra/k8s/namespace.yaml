@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shop
+---
+# Workload Identity: поды с этим ServiceAccount получают токен Entra ID
+# для user-assigned managed identity (client-id подставляется в kustomization.yaml).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: shop-app
+  namespace: shop
+  annotations:
+    azure.workload.identity/client-id: CLIENT_ID_PLACEHOLDER

@@ -1,0 +1,10 @@
+{
+  "/api/products": {
+    "target": "http://localhost:5101",
+    "secure": false
+  },
+  "/api/orders": {
+    "target": "http://localhost:5102",
+    "secure": false
+  }
+}

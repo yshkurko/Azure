@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Shop.Catalog.Api/Shop.Catalog.Api.csproj" />
+  <Project Path="Shop.OrderProcessor/Shop.OrderProcessor.csproj" />
+  <Project Path="Shop.Orders.Api/Shop.Orders.Api.csproj" />
+  <Project Path="Shop.Orders.Data/Shop.Orders.Data.csproj" />
+  <Project Path="Shop.Shared/Shop.Shared.csproj" />
+</Solution>

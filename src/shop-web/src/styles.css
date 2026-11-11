@@ -1,0 +1,80 @@
+:root {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: #1f2328;
+  background: #f6f8fa;
+}
+
+body {
+  margin: 0;
+}
+
+header {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: #0078d4;
+  color: white;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+}
+
+header a.active {
+  text-decoration: underline;
+}
+
+main {
+  max-width: 1000px;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: white;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+button {
+  background: #0078d4;
+  color: white;
+  border: 0;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #8c959f;
+  cursor: default;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.error {
+  color: #cf222e;
+}
+
+.status-Completed { color: #1a7f37; }
+.status-Pending, .status-Processing { color: #9a6700; }
+.status-Failed { color: #cf222e; }

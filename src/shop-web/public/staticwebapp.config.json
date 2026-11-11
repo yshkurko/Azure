@@ -1,0 +1,14 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/config.json", "/*.{js,css,ico,png,svg}"]
+  },
+  "routes": [
+    {
+      "route": "/config.json",
+      "headers": {
+        "cache-control": "no-store"
+      }
+    }
+  ]
+}
